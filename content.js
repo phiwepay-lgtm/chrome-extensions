@@ -14,14 +14,26 @@
     }
   });
 
+  const EDITABLE_SELECTOR = 'input, textarea, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"], [role="textbox"]';
+
   function isEditable(element) {
     if (!(element instanceof Element)) return false;
-    const editable = element.closest('input, textarea, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"], [role="textbox"]');
+    const editable = element.matches(EDITABLE_SELECTOR) ? element : element.closest(EDITABLE_SELECTOR);
     if (!editable || editable.isContentEditable === false || editable.disabled || editable.readOnly) return false;
     if (editable instanceof HTMLInputElement) {
       return /^(text|search|url|tel|email|password)$/i.test(editable.type);
     }
     return true;
+  }
+
+  function editableFromEvent(event) {
+    const path = typeof event.composedPath === 'function' ? event.composedPath() : [event.target];
+    for (const node of path) {
+      if (!(node instanceof Element)) continue;
+      const editable = node.matches(EDITABLE_SELECTOR) ? node : node.closest(EDITABLE_SELECTOR);
+      if (editable && isEditable(editable)) return editable;
+    }
+    return null;
   }
 
   function showToast(message, isError = false, anchorRect = null) {
@@ -64,8 +76,9 @@
     }, 1400);
   }
 
-  async function copySelection(target) {
-    const control = target instanceof Element ? target.closest('input, textarea') : null;
+  async function copySelection(event) {
+    const path = typeof event.composedPath === 'function' ? event.composedPath() : [event.target];
+    const control = path.find((node) => node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement) ?? null;
     const selection = window.getSelection();
     let selectedText = '';
     let anchorRect = null;
@@ -187,19 +200,25 @@
 
   document.addEventListener('dblclick', (event) => {
     if (!settings.copyEnabled || event.button !== 0) return;
-    void copySelection(event.target);
+    void copySelection(event);
+  }, true);
+
+  // Non-primary mouse buttons dispatch `auxclick` in Chromium, not `click`.
+  document.addEventListener('auxclick', (event) => {
+    if (!settings.pasteEnabled || event.button !== 1) return;
+    const editable = editableFromEvent(event);
+    if (!editable) return;
+    event.preventDefault();
+    event.stopPropagation();
+    void pasteInto(editable);
   }, true);
 
   document.addEventListener('click', (event) => {
-    if (!settings.pasteEnabled || !isEditable(event.target)) return;
-    if (event.button === 1) {
-      event.preventDefault();
-      event.stopPropagation();
-      void pasteInto(event.target.closest('input, textarea, [contenteditable], [role="textbox"]'));
-    } else if (event.button === 0 && event.detail >= 3) {
-      event.preventDefault();
-      event.stopPropagation();
-      void pasteInto(event.target.closest('input, textarea, [contenteditable], [role="textbox"]'));
-    }
+    if (!settings.pasteEnabled || event.button !== 0 || event.detail < 3) return;
+    const editable = editableFromEvent(event);
+    if (!editable) return;
+    event.preventDefault();
+    event.stopPropagation();
+    void pasteInto(editable);
   }, true);
 })();
