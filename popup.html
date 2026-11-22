@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ClickCopy Paste</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="panel">
+      <header class="header">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="15" height="18" rx="4" fill="currentColor" opacity=".22"/>
+            <path d="M11 9h11a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4h-9a4 4 0 0 1-4-4V12a3 3 0 0 1 2-3Z" fill="currentColor"/>
+            <path d="M14 17h7m-7 4h7" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow">A quicker way to</p>
+          <h1>Copy &amp; paste</h1>
+        </div>
+        <span class="status-dot" title="Extension is ready" aria-label="Extension is ready"></span>
+      </header>
+
+      <section class="controls" aria-label="Gesture settings">
+        <label class="setting-row" for="copy-toggle">
+          <span class="gesture-icon double" aria-hidden="true"><span></span><span></span></span>
+          <span class="setting-copy">
+            <strong>Double-click to copy</strong>
+            <small>Copies the selected text</small>
+          </span>
+          <span class="switch"><input id="copy-toggle" type="checkbox"><span class="slider"></span></span>
+        </label>
+
+        <div class="divider"></div>
+
+        <label class="setting-row" for="paste-toggle">
+          <span class="gesture-icon wheel" aria-hidden="true"><span></span></span>
+          <span class="setting-copy">
+            <strong>Wheel-click to paste</strong>
+            <small>Paste into a text field</small>
+          </span>
+          <span class="switch"><input id="paste-toggle" type="checkbox"><span class="slider"></span></span>
+        </label>
+      </section>
+
+      <aside class="tip">
+        <span class="tip-icon" aria-hidden="true">↗</span>
+        <p><strong>Also works with a triple-click.</strong><br>Click inside a text field to paste at the cursor.</p>
+      </aside>
+
+      <footer><span class="keyboard-dot"></span> Your clipboard stays on your device</footer>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
