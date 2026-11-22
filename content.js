@@ -64,25 +64,37 @@
     }, 1400);
   }
 
-  async function copySelection() {
+  async function copySelection(target) {
+    const control = target instanceof Element ? target.closest('input, textarea') : null;
     const selection = window.getSelection();
-    const selectedText = selection?.toString();
+    let selectedText = '';
+    let anchorRect = null;
+
+    // Inputs and textareas keep their selection outside window.getSelection().
+    if (control && isEditable(control)) {
+      const start = control.selectionStart;
+      const end = control.selectionEnd;
+      if (start != null && end != null && end > start) {
+        selectedText = control.value.slice(start, end);
+        const rect = control.getBoundingClientRect();
+        anchorRect = { left: rect.left, right: rect.right, top: rect.top, height: rect.height };
+      }
+    } else {
+      selectedText = selection?.toString() ?? '';
+      const rect = selection?.rangeCount ? selection.getRangeAt(0).getBoundingClientRect() : null;
+      if (rect) anchorRect = { left: rect.left, right: rect.right, top: rect.top, height: rect.height };
+    }
     if (!selectedText) return;
-    const rangeRect = selection.rangeCount ? selection.getRangeAt(0).getBoundingClientRect() : null;
-    const anchorRect = rangeRect ? {
-      left: rangeRect.left,
-      right: rangeRect.right,
-      top: rangeRect.top,
-      height: rangeRect.height
-    } : null;
 
     try {
       await navigator.clipboard.writeText(selectedText);
       showToast('Copied to clipboard', false, anchorRect);
     } catch {
       // Fallback for pages where the async Clipboard API is unavailable.
-      const selection = window.getSelection();
       const range = selection?.rangeCount ? selection.getRangeAt(0).cloneRange() : null;
+      const controlWasFocused = control && document.activeElement === control;
+      const controlStart = controlWasFocused ? control.selectionStart : null;
+      const controlEnd = controlWasFocused ? control.selectionEnd : null;
       const helper = document.createElement('textarea');
       helper.value = selectedText;
       helper.setAttribute('readonly', '');
@@ -94,6 +106,10 @@
       if (range && selection) {
         selection.removeAllRanges();
         selection.addRange(range);
+      }
+      if (controlWasFocused && control?.isConnected) {
+        control.focus();
+        control.setSelectionRange(controlStart, controlEnd);
       }
       showToast(copied ? 'Copied to clipboard' : 'Could not access clipboard', !copied, anchorRect);
     }
@@ -171,7 +187,7 @@
 
   document.addEventListener('dblclick', (event) => {
     if (!settings.copyEnabled || event.button !== 0) return;
-    void copySelection();
+    void copySelection(event.target);
   }, true);
 
   document.addEventListener('click', (event) => {
