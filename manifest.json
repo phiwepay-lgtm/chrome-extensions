@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "ClickCopy Paste",
+  "version": "1.0.0",
+  "description": "Copy text with a double-click and paste with a middle-click or triple-click.",
+  "permissions": ["storage", "clipboardRead", "clipboardWrite"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "ClickCopy Paste",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
