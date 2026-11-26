@@ -1,0 +1,68 @@
+# indie:lang_version = 5
+# Trading Brain — Heikin Ashi Overlay + TBSIG bridge markers
+#
+# Draws Heikin Ashi candles as an INDICATOR overlay on a normal OHLC chart.
+# It never asks Exness to change the chart type, so ordinary indicators keep
+# working. Optional TBSIG markers are emitted only on confirmed bar closes.
+#
+# Marker protocol read by the Trading Brain Chrome extension:
+#   TBSIG|BUY|XAUUSD|0.01
+#   TBSIG|SELL|XAUUSD|0.01
+#
+# RESEARCH DRAFT: not compiled in the Exness Indie editor. Test on demo first.
+# The signal is a simple Heikin Ashi colour flip, not a strategy or advice.
+from math import isnan, nan
+from indie import indicator, param, plot, color, MutSeriesF
+
+
+@indicator('Trading Brain Heikin Ashi Overlay', overlay_main_pane=True)
+@param.bool('show_ha_candles', default=True, title='Show Heikin Ashi candles')
+@param.bool('emit_signals', default=False, title='Emit TBSIG markers for MT5 bridge')
+@param.float('order_volume', default=0.01, min=0.01, title='Volume in TBSIG marker')
+@plot.candles(title='Heikin Ashi overlay', up_color=color.rgba(0, 200, 130, 0.85),
+              down_color=color.rgba(255, 82, 92, 0.85))
+@plot.marker(title='TBSIG BUY', style=plot.marker_style.LABEL,
+             position=plot.marker_position.BELOW, color=color.LIME)
+@plot.marker(title='TBSIG SELL', style=plot.marker_style.LABEL,
+             position=plot.marker_position.ABOVE, color=color.RED)
+def Main(self, show_ha_candles, emit_signals, order_volume):
+    # Standard Heikin Ashi calculation from the chart's real OHLC.
+    ha_close = MutSeriesF.new((self.open[0] + self.high[0] + self.low[0] + self.close[0]) / 4.0)
+    ha_open = MutSeriesF.new(init=nan)
+    if isnan(ha_open[1]):
+        ha_open[0] = (self.open[0] + self.close[0]) / 2.0
+    else:
+        ha_open[0] = (ha_open[1] + ha_close[1]) / 2.0
+    ha_high = max(self.high[0], ha_open[0], ha_close[0])
+    ha_low = min(self.low[0], ha_open[0], ha_close[0])
+
+    bullish = ha_close[0] >= ha_open[0]
+    direction = MutSeriesF.new(init=0.0)
+    if isnan(direction[1]):
+        direction[0] = 1.0 if bullish else -1.0
+    elif bullish and direction[1] <= 0.0:
+        direction[0] = 1.0
+    elif not bullish and direction[1] >= 0.0:
+        direction[0] = -1.0
+    else:
+        direction[0] = direction[1]
+
+    flipped_buy = not isnan(direction[1]) and direction[0] == 1.0 and direction[1] <= 0.0
+    flipped_sell = not isnan(direction[1]) and direction[0] == -1.0 and direction[1] >= 0.0
+    confirmed = bool(self.is_closed_bar) and emit_signals
+
+    ticker = str(self.info.ticker)
+    volume_text = str(order_volume)
+    buy_text = 'TBSIG|BUY|' + ticker + '|' + volume_text
+    sell_text = 'TBSIG|SELL|' + ticker + '|' + volume_text
+
+    return (
+        plot.Candles(
+            ha_open[0] if show_ha_candles else nan,
+            ha_high if show_ha_candles else nan,
+            ha_low if show_ha_candles else nan,
+            ha_close[0] if show_ha_candles else nan,
+        ),
+        plot.Marker(ha_low - (ha_high - ha_low) * 0.2 if confirmed and flipped_buy else nan, text=buy_text),
+        plot.Marker(ha_high + (ha_high - ha_low) * 0.2 if confirmed and flipped_sell else nan, text=sell_text),
+    )

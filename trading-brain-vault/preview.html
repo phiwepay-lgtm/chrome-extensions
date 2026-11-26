@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Indicator Vault — Trading Brain</title>
+<style>
+  * { box-sizing: border-box; }
+  :root { color-scheme: dark; font-family: Arial, Helvetica, sans-serif; }
+  body { margin: 0; background: #0c110e; color: #eaf0e7; }
+  .page { max-width: 1080px; padding: 0 5%; margin: auto; }
+  header { height: 72px; border-bottom: 1px solid #29352b; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .brand { color: #b7cbb5; font-size: 11px; font-weight: 700; letter-spacing: .13em; text-decoration: none; }
+  .brand span { color: #536b56; padding: 0 7px; }
+  .tag { border: 1px solid #3b503c; background: #202f22; border-radius: 4px; padding: 8px; color: #a2c391; font-size: 9px; letter-spacing: .13em; font-weight: 700; white-space: nowrap; }
+  .eyebrow { color: #9fbd94; font-size: 10px; font-weight: 700; letter-spacing: .13em; }
+  h1, h2 { font-family: Georgia, serif; font-weight: 400; letter-spacing: -.04em; margin: 14px 0; }
+  h1 { font-size: clamp(44px, 7vw, 68px); }
+  h1 span { color: #add388; }
+  h2 { font-size: 23px; }
+  p { color: #9caf9c; line-height: 1.65; font-size: 14px; margin: 0; }
+  .intro { padding: 58px 0 26px; }
+  .intro > p:last-child { max-width: 660px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 30px; margin-top: 28px; }
+  .stats div { display: flex; flex-direction: column; }
+  .stats strong { color: #c6e6a7; font-family: Georgia, serif; font-size: 32px; font-weight: 400; }
+  .stats span { color: #718575; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+  .controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 12px 0 26px; }
+  .search { display: flex; align-items: center; gap: 10px; flex: 1 1 300px; border: 1px solid #354936; background: #0f1711; border-radius: 5px; padding: 0 13px; }
+  .search span { color: #87a680; font-size: 20px; }
+  .search input { width: 100%; border: 0; outline: 0; background: transparent; color: #eaf0e7; padding: 12px 0; font-size: 13px; }
+  .search input::placeholder { color: #6b826d; }
+  .filters { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip { border: 1px solid #354936; background: #162019; color: #9db79a; border-radius: 99px; padding: 8px 13px; font-size: 11px; cursor: pointer; }
+  .chip:hover { border-color: #6b8f66; }
+  .chip.active { background: #b1d997; border-color: #b1d997; color: #112017; font-weight: 700; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .card { padding: 22px; border: 1px solid #2d3c2e; background: #151e18; border-radius: 7px; }
+  .card.featured { border-color: #5f7d52; background: #18251b; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .version { color: #768d78; font-size: 10px; letter-spacing: .08em; }
+  .card h2 { margin: 16px 0 6px; }
+  .sub { color: #b7cbb5; font-size: 12px; margin-bottom: 12px; }
+  .desc { font-size: 12.5px; flex: 1; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 17px 0 12px; }
+  .tags span { border: 1px solid #334533; color: #8fae8a; border-radius: 3px; padding: 4px 7px; font-size: 9px; letter-spacing: .05em; }
+  .statusline { color: #d7b976; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 15px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .button { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; border-radius: 4px; padding: 10px 12px; font-size: 10px; font-weight: 700; cursor: pointer; }
+  .primary { background: #b1d997; color: #112017; border: 1px solid #b1d997; }
+  .secondary { background: #263a29; color: #d8e8d1; border: 1px solid #4a6547; }
+  .bridge { margin-top: 22px; }
+  .bridge h2 { font-size: 29px; }
+  .bridge ol { margin: 16px 0; padding-left: 20px; color: #9caf9c; font-size: 13px; line-height: 1.9; }
+  aside { margin-top: 18px; padding: 17px; border: 1px solid #554c31; border-radius: 5px; background: #2d291c; color: #c6bb96; font-size: 12px; line-height: 1.7; }
+  aside strong { color: #f1e5bf; }
+  code { color: #c8e8a6; }
+  footer { border-top: 1px solid #29352b; margin-top: 42px; padding: 20px 0 30px; color: #718575; font-size: 10px; letter-spacing: .13em; font-weight: 700; display: flex; justify-content: space-between; gap: 10px; }
+  @media (max-width: 600px) { .intro { padding-top: 40px; } .actions .button { flex: 1 1 100%; } header .tag { font-size: 8px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <a class="brand" href="#">TRADING BRAIN <span>/</span> INDICATOR VAULT</a>
+    <span class="tag">SIGNALS · DRAFTS · SOURCE</span>
+  </header>
+
+  <section class="intro">
+    <p class="eyebrow">YOUR INDICATOR LIBRARY</p>
+    <h1>Indicator<span>.</span>Vault</h1>
+    <p>Every Trading Brain study in one place. Search by name, platform or tag, download the source, and copy it straight into TradingView Pine Editor or the Exness Terminal Indie editor.</p>
+    <div class="stats">
+      <div><strong>8</strong><span>published studies</span></div>
+      <div><strong>3</strong><span>target platforms</span></div>
+      <div><strong>1</strong><span>trade bridge</span></div>
+    </div>
+  </section>
+
+  <section class="controls">
+    <label class="search"><span>⌕</span><input id="q" type="search" placeholder="Search Heikin Ashi, session, VWAP, MT5…" aria-label="Search indicators"></label>
+    <div class="filters" id="filters"></div>
+  </section>
+
+  <section class="grid" id="grid"></section>
+
+  <section class="card bridge">
+    <p class="eyebrow">EXNESS → CHROME → MT5</p>
+    <h2>Trade Bridge</h2>
+    <p>The Heikin Ashi Overlay can print <code>TBSIG|BUY|SYMBOL|VOLUME</code> markers on confirmed candles. The Chrome extension reads those markers and sends an order request to a local Python bridge that talks to MetaTrader 5 on your Windows machine.</p>
+    <ol>
+      <li>Install the Indie indicator from this vault and enable <strong>Emit TBSIG markers</strong>.</li>
+      <li>Load the Chrome extension from <code>extension-trade-bridge/</code>.</li>
+      <li>Run the local bridge from <code>mt5-bridge/</code> with your MT5 terminal logged in.</li>
+      <li>Set your bridge token and symbol allowlist in the extension popup.</li>
+    </ol>
+    <aside><strong>Real money warning.</strong> Auto-execution stays off until you explicitly set <code>TB_AUTO_TRADE=1</code>, <code>TB_DRY_RUN=0</code> and <code>TB_ACKNOWLEDGE_REAL=1</code>. Start in dry-run mode, verify the logs, then enable live trading. Trading Brain indicators are analysis drafts, not verified strategies and not financial advice.</aside>
+  </section>
+
+  <footer>TRADING BRAIN / INDICATOR VAULT <span>NOT FINANCIAL ADVICE</span></footer>
+</div>
+
+<script>
+const items = [
+  { name: 'Heikin Ashi Overlay + Trade Bridge', platform: 'Exness / Indie', version: 'Indie v5', sub: 'Average candles on a normal chart, with TBSIG markers for the Chrome/MT5 bridge', desc: 'Draws Heikin Ashi candles as an indicator overlay so standard indicators keep working on Exness Web Terminal. On confirmed bar closes it can emit TBSIG markers for the Chrome extension.', tags: ['Heikin Ashi','Overlay','TBSIG','Auto-trade ready'], status: 'Draft — verify in your editor', featured: true },
+  { name: 'Dark Orders — Pure Price + History', platform: 'TradingView', version: 'Pine v5', sub: 'Price expansion overlay with a recent-signal recap table', desc: 'Highlights unusual range and body expansion using a 50-bar lookback. Orange marks expansion; teal/red adds a Heikin Ashi body filter.', tags: ['Price action','Z-score','Recap'], status: 'Download available' },
+  { name: 'Trend Predictor', platform: 'TradingView', version: 'Pine v5', sub: 'Closed-candle VWAP and volume-weighted EMA anchor', desc: 'An anchor study blending session VWAP with a volume-weighted EMA. No buy or sell signals — built for confluence.', tags: ['VWAP','EMA','Anchor'], status: 'Download available' },
+  { name: 'Dark Orders + Trend Predictor', platform: 'TradingView', version: 'Pine v5 / Indie v5', sub: 'Two independent studies in one saved script', desc: 'Combined Pine source plus a draft Indie version that reconstructs Heikin Ashi from standard OHLC.', tags: ['Combined','Draft Indie'], status: 'Draft Indie' },
+  { name: 'My Session Range', platform: 'TradingView', version: 'Pine v6 / Indie v5', sub: 'Developing high/low for your chosen trading session', desc: 'Highlights developing session highs and lows with optional shading. Defaults to 03:00–07:00 fixed EST.', tags: ['Sessions','Range','EST'], status: 'Draft Indie' },
+  { name: 'NQ Developing Volume Profile', platform: 'TradingView', version: 'Pine v6 / Indie v5', sub: 'Latest developing profile from 16:00 New York time', desc: 'Approximates a developing volume profile from chart candles. Shows POC, VAH and VAL.', tags: ['Volume profile','POC','NQ'], status: 'Draft Indie' },
+  { name: 'All In One', platform: 'TradingView', version: 'Pine v6', sub: 'Dark Orders, anchor, session range and volume profiles in one script', desc: 'A single Basic-plan-friendly indicator with switchable study groups.', tags: ['Bundle','Basic plan'], status: 'Download available' },
+  { name: 'Supertrend HA MT5 tester', platform: 'MT5', version: 'MQL5 draft', sub: 'Research-only M1 Heikin Ashi EA draft', desc: 'Source-only tester package with a basic dashboard and synthetic HA study levels.', tags: ['EA','Tester','M1'], status: 'Research draft' }
+];
+const filters = ['All','TradingView','Exness / Indie','MT5'];
+let active = 'All';
+const grid = document.getElementById('grid');
+const filterBox = document.getElementById('filters');
+const q = document.getElementById('q');
+filters.forEach(name => {
+  const b = document.createElement('button');
+  b.className = 'chip' + (name === active ? ' active' : '');
+  b.textContent = name;
+  b.onclick = () => { active = name; [...filterBox.children].forEach(c => c.classList.toggle('active', c.textContent === name)); render(); };
+  filterBox.appendChild(b);
+});
+function render() {
+  const needle = q.value.trim().toLowerCase();
+  grid.innerHTML = '';
+  items.filter(i => (active === 'All' || i.platform === active) && (!needle || [i.name,i.sub,i.desc,i.platform,i.version,...i.tags].join(' ').toLowerCase().includes(needle)))
+    .forEach(i => {
+      const el = document.createElement('article');
+      el.className = 'card' + (i.featured ? ' featured' : '');
+      el.innerHTML = `<div class="top"><span class="tag">${i.platform}</span><span class="version">${i.version}</span></div>
+        <h2>${i.name}</h2><p class="sub">${i.sub}</p><p class="desc">${i.desc}</p>
+        <div class="tags">${i.tags.map(t => `<span>${t}</span>`).join('')}</div>
+        <p class="statusline">${i.status}</p>
+        <div class="actions"><a class="button primary" href="#">Download source</a><button class="button secondary" type="button">View code</button></div>`;
+      grid.appendChild(el);
+    });
+}
+q.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+/* Trading Brain — Indicator Vault additions. Append to app/globals.css. */
+.vault .vault-intro { padding-bottom: 24px; }
+.vault-stats { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 30px; }
+.vault-stats div { display: flex; flex-direction: column; gap: 3px; }
+.vault-stats strong { color: #c6e6a7; font-family: Georgia, serif; font-size: 30px; font-weight: 400; }
+.vault-stats span { color: #718575; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+
+.vault-controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 10px 0 26px; }
+.vault-search { display: flex; align-items: center; gap: 10px; flex: 1 1 300px; border: 1px solid #354936; background: #0f1711; border-radius: 5px; padding: 0 13px; }
+.vault-search span { color: #87a680; font-size: 20px; }
+.vault-search input { width: 100%; border: 0; outline: 0; background: transparent; color: #eaf0e7; padding: 12px 0; font-size: 13px; }
+.vault-search input::placeholder { color: #6b826d; }
+.vault-filters { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { border: 1px solid #354936; background: #162019; color: #9db79a; border-radius: 99px; padding: 8px 13px; font-size: 11px; cursor: pointer; }
+.chip:hover { border-color: #6b8f66; }
+.chip.active { background: #b1d997; border-color: #b1d997; color: #112017; font-weight: 700; }
+.vault-empty { padding: 30px 0; color: #9caf9c; }
+
+.vault-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.vault-card { display: flex; flex-direction: column; padding: 22px; }
+.vault-card.featured { border-color: #5f7d52; background: #18251b; }
+.vault-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.vault-card-top .tag { font-size: 8px; }
+.vault-version { color: #768d78; font-size: 10px; letter-spacing: .08em; }
+.vault-card h2 { font-size: 22px; margin: 17px 0 6px; }
+.vault-subtitle { color: #b7cbb5; font-size: 12px; margin-bottom: 13px; }
+.vault-description { font-size: 12.5px; flex: 1; }
+.vault-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 12px; }
+.vault-tags span { border: 1px solid #334533; color: #8fae8a; border-radius: 3px; padding: 4px 7px; font-size: 9px; letter-spacing: .05em; }
+.vault-status { color: #d7b976; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 16px; }
+.vault-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.vault-actions .button { font-size: 10px; padding: 9px 11px; }
+.button.ghost { background: transparent; color: #a8c3a2; border: 1px solid #3c523d; }
+
+.vault-code { margin-top: 22px; }
+.vault-code textarea { margin-top: 14px; height: 320px; }
+.vault-code p { font-size: 12px; }
+.vault-code code, .vault-bridge code { color: #c8e8a6; font-size: 12px; }
+
+.vault-bridge { margin-top: 22px; }
+.vault-bridge h2 { font-size: 28px; }
+.vault-bridge ol { margin: 16px 0 0; padding-left: 20px; color: #9caf9c; font-size: 13px; line-height: 1.9; }
+.vault-bridge aside { margin-top: 20px; }
+@media (max-width: 600px) { .vault-stats { gap: 16px; } .vault-actions .button { flex: 1 1 100%; } }

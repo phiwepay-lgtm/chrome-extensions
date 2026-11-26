@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Trading Brain · Trade Bridge</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="panel">
+      <header class="head">
+        <div class="logo" aria-hidden="true">TB</div>
+        <div>
+          <p class="eyebrow">TRADING BRAIN</p>
+          <h1>Trade Bridge</h1>
+        </div>
+        <span id="status-dot" class="dot" title="Checking bridge…"></span>
+      </header>
+
+      <section class="block">
+        <label class="row" for="enabled">
+          <span><strong>Auto-send enabled</strong><small>Off by default. Enable only after a dry-run test.</small></span>
+          <span class="switch"><input id="enabled" type="checkbox"><span class="slider"></span></span>
+        </label>
+      </section>
+
+      <section class="block form">
+        <label>Bridge URL<input id="bridge-url" type="text" value="http://127.0.0.1:8765"></label>
+        <label>Bridge token<input id="token" type="password" placeholder="Long random value"></label>
+        <div class="pair">
+          <label>Max volume<input id="max-volume" type="number" step="0.01" min="0.01" value="0.1"></label>
+          <label>Allowed symbols<input id="symbols" type="text" value="XAUUSD,EURUSD"></label>
+        </div>
+        <button id="save" class="button primary" type="button">Save settings</button>
+        <button id="refresh" class="button secondary" type="button">Check bridge status</button>
+      </section>
+
+      <section class="block">
+        <p class="label">Manual signal</p>
+        <p class="hint">Paste a marker if your chart renders labels on canvas: <code>TBSIG|BUY|XAUUSD|0.01</code></p>
+        <input id="manual" type="text" placeholder="TBSIG|BUY|XAUUSD|0.01">
+        <button id="send" class="button primary" type="button">Send signal</button>
+      </section>
+
+      <section class="block danger">
+        <p class="label">Emergency stop</p>
+        <div class="pair">
+          <button id="kill" class="button danger-button" type="button">Kill switch ON</button>
+          <button id="unkill" class="button secondary" type="button">Clear</button>
+        </div>
+      </section>
+
+      <pre id="log" class="log" aria-live="polite">Ready.</pre>
+      <footer>Local bridge only · No credentials leave this device</footer>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
