@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Trading Brain Trade Bridge",
+  "version": "0.1.0",
+  "description": "Forwards TBSIG indicator signals from Exness Web Terminal to a local MT5 bridge.",
+  "permissions": ["storage", "notifications"],
+  "host_permissions": [
+    "https://*.exness.com/*",
+    "https://*.exness.ke/*",
+    "https://*.exness.co.ke/*",
+    "https://*.exness.vn/*",
+    "https://*.exness.id/*",
+    "https://*.exness.my/*",
+    "https://*.exness.tr/*",
+    "https://*.exness.com.tr/*",
+    "https://*.exness.eu/*",
+    "http://127.0.0.1:8765/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Trading Brain Trade Bridge",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.exness.com/*",
+        "https://*.exness.ke/*",
+        "https://*.exness.co.ke/*",
+        "https://*.exness.vn/*",
+        "https://*.exness.id/*",
+        "https://*.exness.my/*",
+        "https://*.exness.tr/*",
+        "https://*.exness.com.tr/*",
+        "https://*.exness.eu/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}
